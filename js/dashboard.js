@@ -78,6 +78,16 @@ try {
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map(([ym, n]) => [new Date(ym + '-01T00:00:00').toLocaleDateString(undefined, { year: 'numeric', month: 'long' }), n]);
 
+  // Busiest day of the week and start time
+  const timed = appts.filter(a => a.appointmenttime).map(a => new Date(a.appointmenttime.replace(' ', 'T')));
+  const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const byDay = tally(timed, d => (d.getDay() + 6) % 7); // 0 = Monday
+  const dayRows = dayNames.map((name, i) => [name, byDay.get(i) || 0]).filter(([, n], i) => n > 0 || i < 5);
+  const busiestDay = [...byDay].sort((a, b) => b[1] - a[1])[0];
+  const hourLabel = h => new Date(2000, 0, 1, h).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+  const timeRows = [...tally(timed, d => d.getHours())].sort((a, b) => a[0] - b[0]).map(([h, n]) => [hourLabel(h), n]);
+  const busiestTime = [...tally(timed, d => d.getHours())].sort((a, b) => b[1] - a[1] || a[0] - b[0])[0];
+
   // Clients
   const foundRows = [...tally(clients, c => c.foundout || 'Not recorded')].sort((a, b) => b[1] - a[1]);
   const reminderRows = [...tally(clients, c => c.remindermethod || 'Not set')].sort((a, b) => b[1] - a[1]);
@@ -98,6 +108,8 @@ try {
       ${stat(fmt(Math.round(totalMinutes / 60)), 'Hours of counseling booked')}
       ${stat(clientsPerAppt, 'Clients per appointment, on average')}
       ${stat(fmt(upcoming), 'Upcoming appointments')}
+      ${stat(busiestDay ? dayNames[busiestDay[0]] : '–', busiestDay ? `Busiest day (${fmt(busiestDay[1])} of ${fmt(timed.length)} appointments)` : 'Busiest day')}
+      ${stat(busiestTime ? hourLabel(busiestTime[0]) : '–', busiestTime ? `Busiest start time (${fmt(busiestTime[1])} appointments)` : 'Busiest start time')}
       ${stat(pct(referred, clients.length), `Clients referred by another client (${fmt(referred)})`)}
     </div>
     <p class="subtle">Appointments on record run from ${esc(formatDate(first) || '–')} to ${esc(formatDate(last) || '–')}.</p>`;
@@ -115,6 +127,8 @@ try {
   }
 
   html += `<div class="grid-2">
+      ${barTable('Appointments by day of the week', dayRows)}
+      ${barTable('Appointments by start time', timeRows)}
       ${barTable('Appointments by counselor', counselorRows)}
       ${barTable('Appointments by room', roomRows)}
       ${barTable('How clients found out about RAFT', foundRows, 'Clients')}
