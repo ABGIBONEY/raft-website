@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Home – RAFT Front Desk</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header id="site-header"></header>
+  <main>
+    <div class="page-head">
+      <h1>Welcome</h1>
+      <p class="subtle" id="intro"></p>
+    </div>
+
+    <div class="grid">
+      <a class="card nav-card" href="lookup.html">
+        <h2>Client lookup</h2>
+        <p>Find a client by name, phone or email and see their contact details, appointments and families.</p>
+      </a>
+      <a class="card nav-card" href="dashboard.html">
+        <h2>Dashboard</h2>
+        <p>Key numbers about RAFT: clients, appointments, attendance, rooms and counselors.</p>
+      </a>
+      <a class="card nav-card" href="edit.html" id="edit-card">
+        <h2>Add or edit</h2>
+        <p id="edit-card-text"></p>
+      </a>
+    </div>
+
+    <div class="grid-2">
+      <section class="card">
+        <h2>Upcoming appointments</h2>
+        <div id="upcoming"><p class="subtle">Loading…</p></div>
+      </section>
+      <section class="card">
+        <h2>Most recent appointments</h2>
+        <div id="recent"><p class="subtle">Loading…</p></div>
+      </section>
+    </div>
+  </main>
+  <script type="module" src="js/home.js"></script>
+</body>
+</html>

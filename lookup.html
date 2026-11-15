@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Client lookup – RAFT Front Desk</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header id="site-header"></header>
+  <main>
+    <div class="page-head">
+      <h1>Client lookup</h1>
+      <p class="subtle">Search by first name, last name, phone or email. Leave the box empty to list every client.</p>
+    </div>
+
+    <form class="card row" id="search-form" role="search">
+      <div class="grow">
+        <label for="q">Search clients</label>
+        <input id="q" name="q" type="search" placeholder="e.g. Smith, 804-555, jane@">
+      </div>
+      <button class="btn" type="submit">Search</button>
+      <a class="btn btn-quiet" href="edit.html?type=client" id="new-client" hidden>Add a new client</a>
+    </form>
+
+    <div class="grid-2" style="grid-template-columns: minmax(240px, 1fr) minmax(0, 2.2fr);">
+      <section class="card">
+        <h2 id="results-title">Clients</h2>
+        <div id="results"><p class="subtle">Loading…</p></div>
+      </section>
+      <section id="detail">
+        <div class="card"><p class="subtle">Choose a client to see their details.</p></div>
+      </section>
+    </div>
+  </main>
+  <script type="module" src="js/lookup.js"></script>
+</body>
+</html>

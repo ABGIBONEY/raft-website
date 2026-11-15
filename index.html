@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in – RAFT Front Desk</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="signin-wrap">
+    <form class="card signin" id="signin-form" novalidate>
+      <h1>RAFT Front Desk</h1>
+      <p class="subtle">Richmond Area Family Therapy. Sign in with your staff account.</p>
+      <div id="message" aria-live="polite"></div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="btn" type="submit" id="submit" style="width:100%">Sign in</button>
+    </form>
+  </div>
+  <script type="module">
+    import { supabase } from './js/common.js';
+
+    // Already signed in? Go straight to Home.
+    const { data } = await supabase.auth.getSession();
+    if (data.session) window.location.replace('home.html');
+
+    const form = document.getElementById('signin-form');
+    const message = document.getElementById('message');
+    const submit = document.getElementById('submit');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      message.innerHTML = '';
+      const email = form.email.value.trim();
+      const password = form.password.value;
+      if (!email || !password) {
+        message.innerHTML = '<div class="alert alert-error" role="alert">Enter your email and password.</div>';
+        return;
+      }
+      submit.disabled = true;
+      submit.textContent = 'Signing in…';
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        const wrong = /invalid login credentials/i.test(error.message);
+        const div = document.createElement('div');
+        div.className = 'alert alert-error';
+        div.setAttribute('role', 'alert');
+        div.textContent = wrong ? 'That email or password is wrong. Please try again.' : `Could not sign in: ${error.message}`;
+        message.appendChild(div);
+        submit.disabled = false;
+        submit.textContent = 'Sign in';
+        form.password.select();
+        return;
+      }
+      window.location.replace('home.html');
+    });
+  </script>
+</body>
+</html>
